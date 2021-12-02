@@ -1,58 +1,37 @@
-import React from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
+import React, { useEffect, useState } from 'react';
 import './App.css';
+import {
+    formatDonationsData,
+    IDonation,
+} from "./features/data/DataHelper";
+import { setDonationData } from '../src/features/data/donationSlice';
+import { useAppDispatch } from "./app/hooks";
+import axios from "axios";
+import DonorTable from "./features/donorList/DonorTable";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
-    </div>
-  );
+    const [donations, setDonations] = useState<IDonation[]>([]);
+    const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        // const data = getFakeDonationData();
+        if(process.env.REACT_APP_DONATIONS_URL) {
+            axios.get(process.env.REACT_APP_DONATIONS_URL).then((response) => {
+                const cleanData = formatDonationsData(response.data);
+                dispatch(setDonationData(cleanData));
+                setDonations(cleanData);
+            });
+        } else {
+            console.error("missing REACT_APP_DONATIONS_URL environent variable");
+        }
+    }, []);
+
+    return (
+        <div className="App">
+            <h1>Donatoins stuff here...</h1>
+            <DonorTable/>
+        </div>
+    );
 }
 
 export default App;
