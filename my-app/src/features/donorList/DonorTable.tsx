@@ -31,7 +31,7 @@ function DonorTable() {
 						<td>{row.amount}</td>
 						<td>{row.last_name}</td>
 						<td>{row.first_name}</td>
-						<td>{row.created_at.toDateString()}</td>
+						<td>{row.created_at.toLocaleDateString() + " " + row.created_at.toLocaleTimeString()}</td>
 						<td>{row.city}</td>
 						<td>{row.state}</td>
 						<td>{row.postal_code}</td>
