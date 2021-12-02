@@ -58,25 +58,25 @@ function DonorChart() {
 			>
 				<CartesianGrid stroke="#f5f5f5" />
 				<XAxis dataKey="hour" />
-				<YAxis tickFormatter={(value: number) => new Intl.NumberFormat('en').format(value)}/>
-				<Tooltip formatter={(value: number) => new Intl.NumberFormat('en').format(value)} />
+				<YAxis tickFormatter={(value: number) => new Intl.NumberFormat('en', {style: 'currency', currency: 'USD', maximumFractionDigits: 0}).format(value)}/>
+				<Tooltip formatter={(value: number) => new Intl.NumberFormat('en', {style: 'currency', currency: 'USD'}).format(value)} />
 				<Legend layout="vertical" verticalAlign="top" align="center" />
 				<Bar dataKey="user_subscription" barSize={30} stackId={"a"} fill="#30cb00" />
 				<Bar dataKey="nonUser_subscription" barSize={30} stackId={"a"} fill="#4ae54a" />
 				<Bar dataKey="user_notSubcription" barSize={30} stackId={"a"} fill="#ffcc9d" />
 				<Bar dataKey="nonUser_notSubscription" barSize={30} stackId={"a"} fill="#ffa29d" />
-				<Line type="monotone" dataKey="runningTotal" stroke="#ff7300" />
+				<Line type="monotone" dataKey="runningTotal" stroke="black" />
 			</ComposedChart>
 			)
 	}
 
 
 	return (
-		<Container>
+		<div className={"DonorChart"}>
 			<h1>Chart</h1>
 			{console.log('chart render RETURN')}
 			{chartPoints.length > 0 ? renderChart() : null}
-		</Container>
+		</div>
 
 	);
 }

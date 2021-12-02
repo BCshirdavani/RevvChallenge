@@ -28,7 +28,7 @@ function DonorTable() {
 				<tbody>
 				{tableData.map((row) =>
 					<tr key={row.id}>
-						<td>{row.amount}</td>
+						<td>{row.amount.toLocaleString('US', { style: 'currency', currency: 'USD' })}</td>
 						<td>{row.last_name}</td>
 						<td>{row.first_name}</td>
 						<td>{row.created_at.toLocaleDateString() + " " + row.created_at.toLocaleTimeString()}</td>
@@ -70,7 +70,7 @@ function DonorTable() {
 	}
 
 	return (
-		<Container>
+		<div className={"DonorTable"}>
 			<div>
 				<Button color={"primary"} onClick={() => {toggleSort()}}>Toggle Sort</Button>
 			</div>
@@ -91,7 +91,7 @@ function DonorTable() {
 				</thead>
 				{renderTableRows()}
 			</Table>
-		</Container>
+		</div>
 	)
 }
 

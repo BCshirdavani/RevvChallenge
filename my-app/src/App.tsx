@@ -9,6 +9,8 @@ import { useAppDispatch } from "./app/hooks";
 import DonorTable from "./features/donorList/DonorTable";
 import DonorChart from "./features/donorChart/DonorChart";
 import axios from "axios";
+import { Container } from "react-bootstrap";
+import LeaderBoard from "./features/leaderBoard/LeaderBoard";
 
 function App() {
     const [donations, setDonations] = useState<IDonation[]>([]);
@@ -31,9 +33,12 @@ function App() {
 
     return (
         <div className="App">
-            <h1>Donatoins stuff here...</h1>
-            <DonorChart/>
-            <DonorTable/>
+            <Container>
+                <h1>Donatoins stuff here...</h1>
+                <LeaderBoard/>
+                <DonorChart/>
+                <DonorTable/>
+            </Container>
         </div>
     );
 }
