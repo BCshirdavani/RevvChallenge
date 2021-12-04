@@ -59,10 +59,8 @@ function DonorChart() {
 		if(donations.length > 0){
 			console.log('effect 2: INSIDE IF');
 			const filteredData = applyFilters(donations);
-			if (filteredData.length > 0){
-				const points = formatDataForHourlyChart(filteredData, minTime, maxTime);
-				setChartPoints(points);
-			}
+			const points = formatDataForHourlyChart(filteredData, minTime, maxTime);
+			setChartPoints(points);
 		}
 	}, [minTime, maxTime, donations, shownAcctTypes, shownSubscriberTypes, showNotAcct, showAcct, showNotSub, showSub]);
 
@@ -114,6 +112,57 @@ function DonorChart() {
 		setShowNotAcct(checked);
 	}
 
+	const renderCategoryFilter = (description: string, onChange: (checked: any) => void) => {
+		return (
+			<Row>
+				<Col className={'FilterItem'}>{description}</Col>
+				<Col>
+					<Container className={'FilterItem'}>
+						<Switch title={description} defaultChecked onChange={onChange} />
+					</Container>
+				</Col>
+			</Row>
+		)
+	}
+
+	const renderDateFilter = (
+		description: string,
+		onChange: React.Dispatch<React.SetStateAction<Date>>,
+		val: Date,
+		dateCutoff: Date,
+		hasCeiling: boolean
+		) => {
+		if (hasCeiling) {
+			// set calendar ceiling
+			return (
+				<Row>
+					<Col className={'FilterItem'}>{description}</Col>
+					<Col className={'FilterItem'}>
+						<DatePicker
+							onChange={onChange}
+							value={val}
+							maxDate={dateCutoff}
+						/>
+					</Col>
+				</Row>
+			)
+		} else {
+			// set calendar floor
+			return (
+				<Row>
+					<Col className={'FilterItem'}>{description}</Col>
+					<Col className={'FilterItem'}>
+						<DatePicker
+							onChange={onChange}
+							value={val}
+							minDate={dateCutoff}
+						/>
+					</Col>
+				</Row>
+			)
+		}
+	}
+
 	const renderChart = () => {
 		return (
 				<Col xs={12} md={8}>
@@ -138,7 +187,7 @@ function DonorChart() {
 							<Bar dataKey="nonUser_subscription" barSize={30} stackId={"a"} fill="#4ae54a" />
 							<Bar dataKey="user_notSubcription" barSize={30} stackId={"a"} fill="#ffcc9d" />
 							<Bar dataKey="nonUser_notSubscription" barSize={30} stackId={"a"} fill="#ffa29d" />
-							<Line type="monotone" dataKey="runningTotal" stroke="black" />
+							<Line type="monotone" dataKey="runningTotal" stroke="gray" />
 						</ComposedChart>
 					</ResponsiveContainer>
 				</Col>
@@ -147,72 +196,21 @@ function DonorChart() {
 
 	return (
 		<Container className={"DonorChart"}>
-			<h1>Chart</h1>
+			<h3>Chart</h3>
 			<Row>
 				{renderChart()}
 				<Col xs={6} md={4}>
-					<div className={'FilterArea'}>
+					<Container className={'FilterArea'}>
 						<h5>Chart Filters</h5>
 						<Container>
-							<Col>
-								<Row>
-									<Col className={'FilterItem'}>Subscribers</Col>
-									<Col>
-										<Container className={'FilterItem'}>
-											<Switch title={'Subscribers'} defaultChecked onChange={toggleSubscribers} />
-										</Container>
-									</Col>
-								</Row>
-								<Row>
-									<Col className={'FilterItem'}>Non Subscribers</Col>
-									<Col>
-										<Container className={'FilterItem'}>
-											<Switch title={'Non Subscribers'} defaultChecked onChange={toggleNonSubscribers} />
-										</Container>
-									</Col>
-								</Row>
-							</Col>
-							<Row>
-								<Row>
-									<Col className={'FilterItem'}>Account</Col>
-									<Col>
-										<Container className={'FilterItem'}>
-											<Switch title={'Account'} defaultChecked onChange={toggleAccount} />
-										</Container>
-									</Col>
-								</Row>
-								<Row>
-									<Col className={'FilterItem'}>Non Account</Col>
-									<Col>
-										<Container className={'FilterItem'}>
-											<Switch title={'Non Account'} defaultChecked onChange={toggleNonAccount} />
-										</Container>
-									</Col>
-								</Row>
-							</Row>
-							<Row>
-								<Col className={'FilterItem'}>Start Date:</Col>
-								<Col className={'FilterItem'}>
-									<DatePicker
-										onChange={setMinTime}
-										value={minTime}
-										maxDate={maxTime}
-									/>
-								</Col>
-
-							</Row>
-							<Row>
-								<Col className={'FilterItem'}>End Date:</Col>
-								<Col className={'FilterItem'}>
-									<DatePicker
-										onChange={setMaxTime}
-										value={maxTime}
-										minDate={minTime}
-									/>
-								</Col>
-							</Row>
+							{renderCategoryFilter('Subscribers', toggleSubscribers)}
+							{renderCategoryFilter('Non Subscribers', toggleNonSubscribers)}
+							{renderCategoryFilter('Account', toggleAccount)}
+							{renderCategoryFilter('Non Account', toggleNonAccount)}
+							{renderDateFilter('Start Date', setMinTime, minTime, maxTime, true)}
+							{renderDateFilter('End Date', setMaxTime, maxTime, minTime, false)}
 						</Container>
-					</div>
+					</Container>
 
 				</Col>
 			</Row>

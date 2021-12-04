@@ -58,7 +58,7 @@ function LeaderBoard() {
 
 	return (
 		<Container className={"LeaderBoard"}>
-			<h1>LeaderBoard</h1>
+			<h3>LeaderBoard</h3>
 			<Table>
 				<thead>
 				<tr>

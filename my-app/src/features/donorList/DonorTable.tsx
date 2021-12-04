@@ -71,11 +71,12 @@ function DonorTable() {
 	}
 
 	return (
-		<div className={"DonorTable"}>
+		<Container className={"DonorTable"}>
+			<h3>List of All Donors</h3>
 			<div>
 				<Button color={"primary"} onClick={() => {toggleSort()}}>Toggle Sort</Button>
 			</div>
-			<Table>
+			<Table className={"Table"}>
 				<thead>
 					<tr>
 						<th>Amount</th>
@@ -92,7 +93,7 @@ function DonorTable() {
 				</thead>
 				{renderTableRows()}
 			</Table>
-		</div>
+		</Container>
 	)
 }
 
