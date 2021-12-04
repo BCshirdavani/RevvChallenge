@@ -11,10 +11,11 @@ import {
 	XAxis,
 	YAxis,
 	ComposedChart,
-	CartesianGrid
+	CartesianGrid, ResponsiveContainer
 } from "recharts";
 import DatePicker from 'react-date-picker';
 import { Switch } from "antd";
+import './Chart.css';
 
 enum AccountTypes {
 	USER = "user",
@@ -115,104 +116,108 @@ function DonorChart() {
 
 	const renderChart = () => {
 		return (
-				<Col>
-					<ComposedChart
-						width={800}
-						height={600}
-						data={chartPoints}
-						margin={{
-							top: 5,
-							right: 5,
-							bottom: 5,
-							left: 5,
-						}}
-					>
-						<CartesianGrid stroke="#f5f5f5" />
-						<XAxis dataKey="hour" />
-						<YAxis tickFormatter={(value: number) => new Intl.NumberFormat('en', {style: 'currency', currency: 'USD', maximumFractionDigits: 0}).format(value)}/>
-						<Tooltip formatter={(value: number) => new Intl.NumberFormat('en', {style: 'currency', currency: 'USD'}).format(value)} />
-						<Legend layout="vertical" verticalAlign="top" align="center" />
-						<Bar dataKey="user_subscription" barSize={30} stackId={"a"} fill="#30cb00" />
-						<Bar dataKey="nonUser_subscription" barSize={30} stackId={"a"} fill="#4ae54a" />
-						<Bar dataKey="user_notSubcription" barSize={30} stackId={"a"} fill="#ffcc9d" />
-						<Bar dataKey="nonUser_notSubscription" barSize={30} stackId={"a"} fill="#ffa29d" />
-						<Line type="monotone" dataKey="runningTotal" stroke="black" />
-					</ComposedChart>
+				<Col xs={12} md={8}>
+					<ResponsiveContainer height={600} width={"100%"}>
+						<ComposedChart
+							width={800}
+							height={600}
+							data={chartPoints}
+							margin={{
+								top: 5,
+								right: 5,
+								bottom: 5,
+								left: 5,
+							}}
+						>
+							<CartesianGrid stroke="#f5f5f5" />
+							<XAxis dataKey="hour" />
+							<YAxis tickFormatter={(value: number) => new Intl.NumberFormat('en', {style: 'currency', currency: 'USD', maximumFractionDigits: 0}).format(value)}/>
+							<Tooltip formatter={(value: number) => new Intl.NumberFormat('en', {style: 'currency', currency: 'USD'}).format(value)} />
+							<Legend layout="vertical" verticalAlign="top" align="center" />
+							<Bar dataKey="user_subscription" barSize={30} stackId={"a"} fill="#30cb00" />
+							<Bar dataKey="nonUser_subscription" barSize={30} stackId={"a"} fill="#4ae54a" />
+							<Bar dataKey="user_notSubcription" barSize={30} stackId={"a"} fill="#ffcc9d" />
+							<Bar dataKey="nonUser_notSubscription" barSize={30} stackId={"a"} fill="#ffa29d" />
+							<Line type="monotone" dataKey="runningTotal" stroke="black" />
+						</ComposedChart>
+					</ResponsiveContainer>
 				</Col>
 			)
 	}
 
 	return (
-		<div className={"DonorChart"}>
+		<Container className={"DonorChart"}>
 			<h1>Chart</h1>
 			<Row>
 				{renderChart()}
-				<Col>
-					<h5>Chart Filters</h5>
-					<Container>
-						<Col>
-							<Row>
-								<Col>Subscribers</Col>
-								<Col>
-									<Container>
-										<Switch title={'Subscribers'} defaultChecked onChange={toggleSubscribers} />
-									</Container>
-								</Col>
-							</Row>
-							<Row>
-								<Col>Non Subscribers</Col>
-								<Col>
-									<Container>
-										<Switch title={'Non Subscribers'} defaultChecked onChange={toggleNonSubscribers} />
-									</Container>
-								</Col>
-							</Row>
-						</Col>
-						<Row>
-							<Row>
-								<Col>Account</Col>
-								<Col>
-									<Container>
-										<Switch title={'Account'} defaultChecked onChange={toggleAccount} />
-									</Container>
-								</Col>
-							</Row>
-							<Row>
-								<Col>Non Account</Col>
-								<Col>
-									<Container>
-										<Switch title={'Non Account'} defaultChecked onChange={toggleNonAccount} />
-									</Container>
-								</Col>
-							</Row>
-						</Row>
-						<Row>
-							<Col>Start Date:</Col>
+				<Col xs={6} md={4}>
+					<div className={'FilterArea'}>
+						<h5>Chart Filters</h5>
+						<Container>
 							<Col>
-								<DatePicker
-									onChange={setMinTime}
-									value={minTime}
-									maxDate={maxTime}
-								/>
+								<Row>
+									<Col className={'FilterItem'}>Subscribers</Col>
+									<Col>
+										<Container className={'FilterItem'}>
+											<Switch title={'Subscribers'} defaultChecked onChange={toggleSubscribers} />
+										</Container>
+									</Col>
+								</Row>
+								<Row>
+									<Col className={'FilterItem'}>Non Subscribers</Col>
+									<Col>
+										<Container className={'FilterItem'}>
+											<Switch title={'Non Subscribers'} defaultChecked onChange={toggleNonSubscribers} />
+										</Container>
+									</Col>
+								</Row>
 							</Col>
+							<Row>
+								<Row>
+									<Col className={'FilterItem'}>Account</Col>
+									<Col>
+										<Container className={'FilterItem'}>
+											<Switch title={'Account'} defaultChecked onChange={toggleAccount} />
+										</Container>
+									</Col>
+								</Row>
+								<Row>
+									<Col className={'FilterItem'}>Non Account</Col>
+									<Col>
+										<Container className={'FilterItem'}>
+											<Switch title={'Non Account'} defaultChecked onChange={toggleNonAccount} />
+										</Container>
+									</Col>
+								</Row>
+							</Row>
+							<Row>
+								<Col className={'FilterItem'}>Start Date:</Col>
+								<Col className={'FilterItem'}>
+									<DatePicker
+										onChange={setMinTime}
+										value={minTime}
+										maxDate={maxTime}
+									/>
+								</Col>
 
-						</Row>
-						<Row>
-							<Col>End Date:</Col>
-							<Col>
-								<DatePicker
-									onChange={setMaxTime}
-									value={maxTime}
-									minDate={minTime}
-								/>
-							</Col>
+							</Row>
+							<Row>
+								<Col className={'FilterItem'}>End Date:</Col>
+								<Col className={'FilterItem'}>
+									<DatePicker
+										onChange={setMaxTime}
+										value={maxTime}
+										minDate={minTime}
+									/>
+								</Col>
+							</Row>
+						</Container>
+					</div>
 
-						</Row>
-					</Container>
 				</Col>
 			</Row>
 
-		</div>
+		</Container>
 
 	);
 }

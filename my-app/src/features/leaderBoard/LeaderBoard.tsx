@@ -3,6 +3,7 @@ import { Container, Table } from "react-bootstrap";
 import { IDonation } from "../data/DataHelper";
 import { useSelector } from "react-redux";
 import { store } from "../../app/store";
+import './LeaderBoard.css';
 
 
 function LeaderBoard() {
@@ -56,7 +57,7 @@ function LeaderBoard() {
 
 
 	return (
-		<div className={"LeaderBoard"}>
+		<Container className={"LeaderBoard"}>
 			<h1>LeaderBoard</h1>
 			<Table>
 				<thead>
@@ -67,7 +68,7 @@ function LeaderBoard() {
 				</thead>
 				{renderLeaders()}
 			</Table>
-		</div>
+		</Container>
 	);
 }
 

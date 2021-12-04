@@ -3,6 +3,7 @@ import { Button, Container, Table } from "react-bootstrap";
 import { IDonation } from "../data/DataHelper";
 import { useSelector } from "react-redux";
 import { store } from "../../app/store";
+import './DonorTable.css';
 
 
 function DonorTable() {

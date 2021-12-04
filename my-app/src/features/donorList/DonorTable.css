@@ -1,0 +1,9 @@
+.DonorTable {
+    background-color: white;
+    outline-width: thin;
+    outline: black;
+    box-shadow: 0px 0px 12px 1px rgba(0, 0, 0, .2);
+    margin-top: 20px;
+    margin-bottom: 40px;
+    padding: 20px;
+}
