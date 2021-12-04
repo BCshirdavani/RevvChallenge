@@ -15,6 +15,7 @@ export interface IDonation {
 	postal_code: string,
 	subscription: boolean,
 	account_type: string,
+	account_is_user: boolean,
 }
 
 export interface IChartPoint {
@@ -46,6 +47,7 @@ export function formatDonationsData(donations: any[]): IDonation[] {
 			postal_code: row.postal_code,
 			state: row.state,
 			subscription: row.subscription === "true",
+			account_is_user: row.account_type == "user",
 		};
 		formattedDonations.push(newRow);
 	});
@@ -57,8 +59,8 @@ export 	function formatDataForHourlyChart(rawData: IDonation[], startFilter: Dat
 	const arrToSort = [...rawData];
 	const sortedArr = arrToSort.sort(timeAescending);
 	const donations: number = sortedArr.length;
-	const firstDate = sortedArr[0].created_at;
-	const lastDate = sortedArr[donations - 1].created_at;
+	const firstDate = sortedArr[0] ? sortedArr[0].created_at : startFilter;
+	const lastDate = sortedArr[donations - 1] ? sortedArr[donations - 1].created_at : endFilter;
 	let prevDate = new Date(firstDate.toUTCString());
 	prevDate.setHours(firstDate.getHours());
 	prevDate.setMinutes(0);
@@ -112,6 +114,21 @@ export 	function formatDataForHourlyChart(rawData: IDonation[], startFilter: Dat
 	return formattedData;
 }
 
+export function getEarliestDate(donorRecords: IDonation[]) {
+	let arrToSort = [...donorRecords];
+	return arrToSort.sort(timeAescending)[0].created_at;
+}
+
+export function getLastDate(donorRecords: IDonation[]) {
+	let arrToSort = [...donorRecords];
+	return arrToSort.sort(timeAescending)[donorRecords.length - 1].created_at;
+}
+
+// used for dev/testing
+export function getFakeDonationData(): IDonation[] {
+	return formatDonationsData(fakeData);
+}
+
 // creates chart data point from donation record
 function newChartPointFromRow(row: IDonation, i: number, oldTotal: number, dateBucket: Date): IChartPoint {
 	const nonUser_notSub = (!row.subscription && row.account_type != "user") ? row.amount : 0;
@@ -154,11 +171,6 @@ function timeAescending( a: IDonation, b: IDonation ) {
 		return 1;
 	}
 	return 0;
-}
-
-// used for dev/testing
-export function getFakeDonationData(): IDonation[] {
-	return formatDonationsData(fakeData);
 }
 
 

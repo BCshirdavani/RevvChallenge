@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, Col, Container, Row } from "react-bootstrap";
-import { formatDataForHourlyChart, IChartPoint, IDonation } from "../data/DataHelper";
+import { Button, Col, Container, Row, ToggleButton } from "react-bootstrap";
+import { formatDataForHourlyChart, getEarliestDate, getLastDate, IChartPoint, IDonation } from "../data/DataHelper";
 import { useSelector } from "react-redux";
 import { store } from "../../app/store";
 import {
@@ -14,6 +14,7 @@ import {
 	CartesianGrid
 } from "recharts";
 import DatePicker from 'react-date-picker';
+import { Switch } from "antd";
 
 enum AccountTypes {
 	USER = "user",
@@ -28,6 +29,10 @@ function DonorChart() {
 	const [shownSubscriberTypes, setshownSubscriberTypes] = useState<boolean[]>([true, false]);
 	const [shownAcctTypes, setshowAncctTypes] = useState<string[]>([AccountTypes.USER, AccountTypes.NON_USER]);
 	const [filteredPoints, setFilteredPoints] = useState<IChartPoint[]>([]);
+	const [showSub, setShowSub] = useState<boolean>(true);
+	const [showNotSub, setShowNotSub] = useState<boolean>(true);
+	const [showAcct, setShowAcct] = useState<boolean>(true);
+	const [showNotAcct, setShowNotAcct] = useState<boolean>(true);
 	const donationStoreSate = useSelector(state => store.getState().donations);
 
 	const prevDonationsRef = useRef<IDonation[]>();
@@ -37,6 +42,12 @@ function DonorChart() {
 		const donationsInStore = donationStoreSate.value;
 		if(donationsInStore != prevDonationsRef.current) {
 			console.log('effect 1: INSIDE IF');
+			console.log('first date:');
+			console.log(getEarliestDate(donationsInStore));
+			console.log('last date:')
+			console.log(getLastDate(donationsInStore));
+			setMinTime(getEarliestDate(donationsInStore));
+			setMaxTime(getLastDate(donationsInStore));
 			setDonations(donationsInStore);
 		}
 		prevDonationsRef.current = donationsInStore;
@@ -52,25 +63,58 @@ function DonorChart() {
 				setChartPoints(points);
 			}
 		}
-	}, [minTime, maxTime, donations, shownAcctTypes, shownSubscriberTypes]);
+	}, [minTime, maxTime, donations, shownAcctTypes, shownSubscriberTypes, showNotAcct, showAcct, showNotSub, showSub]);
 
 
 	function applyFilters(donationsToFilter: IDonation[]): IDonation[] {
-		const filtered = donationsToFilter.filter(value => {
-			return (
-				shownAcctTypes.includes(value.account_type) &&
-				shownSubscriberTypes.includes(value.subscription) &&
-				value.created_at >= minTime &&
-				value.created_at <= maxTime
-			);
+		let subscriptionFilter: boolean[] = [];
+		if (showSub) subscriptionFilter.push(true);
+		if (showNotSub) subscriptionFilter.push(false);
+		let accountFilter: boolean[] = [];
+		if (showAcct) accountFilter.push(true);
+		if (showNotAcct) accountFilter.push(false);
+		const filteredByDateWindow = donationsToFilter.filter(item => {
+			if (item.created_at >= minTime && item.created_at <= maxTime){
+				return true;
+			} else {
+				return false;
+			}
 		});
-		return filtered;
+		const filteredBySubscriptions = filteredByDateWindow.filter(item => {
+			if(subscriptionFilter.includes(item.subscription)){
+				return true;
+			} else {
+				return false;
+			}
+		});
+		const filteredByAcct = filteredBySubscriptions.filter(item => {
+			if(accountFilter.includes(item.account_is_user)) {
+				return true;
+			} else {
+				return false;
+			}
+		});
+		return filteredByAcct;
+	}
+
+	function toggleSubscribers(checked: any){
+		setShowSub(checked);
+	}
+
+	function toggleNonSubscribers(checked: any){
+		setShowNotSub(checked);
+	}
+
+	function toggleAccount(checked: any){
+		setShowAcct(checked);
+	}
+
+	function toggleNonAccount(checked: any){
+		setShowNotAcct(checked);
 	}
 
 	const renderChart = () => {
-
 		return (
-			<Row>
 				<Col>
 					<ComposedChart
 						width={800}
@@ -95,47 +139,79 @@ function DonorChart() {
 						<Line type="monotone" dataKey="runningTotal" stroke="black" />
 					</ComposedChart>
 				</Col>
-				<Col>
-					<h3>filters</h3>
-					<Container>
-						<Col>
-							<Row>
-								<Button>Sub</Button>
-								<Button>Non Sub</Button>
-							</Row>
-						</Col>
-						<Row>
-							<Button>Account</Button>
-							<Button>Non Account</Button>
-						</Row>
-						<Row>
-							<DatePicker
-								onChange={setMinTime}
-								value={minTime}
-								maxDate={maxTime}
-							/>
-						</Row>
-						<Row>
-							<DatePicker
-								onChange={setMaxTime}
-								value={maxTime}
-								minDate={minTime}
-							/>
-						</Row>
-					</Container>
-
-				</Col>
-			</Row>
-
 			)
 	}
-
 
 	return (
 		<div className={"DonorChart"}>
 			<h1>Chart</h1>
-			{console.log('chart render RETURN')}
-			{chartPoints.length > 0 ? renderChart() : null}
+			<Row>
+				{renderChart()}
+				<Col>
+					<h5>Chart Filters</h5>
+					<Container>
+						<Col>
+							<Row>
+								<Col>Subscribers</Col>
+								<Col>
+									<Container>
+										<Switch title={'Subscribers'} defaultChecked onChange={toggleSubscribers} />
+									</Container>
+								</Col>
+							</Row>
+							<Row>
+								<Col>Non Subscribers</Col>
+								<Col>
+									<Container>
+										<Switch title={'Non Subscribers'} defaultChecked onChange={toggleNonSubscribers} />
+									</Container>
+								</Col>
+							</Row>
+						</Col>
+						<Row>
+							<Row>
+								<Col>Account</Col>
+								<Col>
+									<Container>
+										<Switch title={'Account'} defaultChecked onChange={toggleAccount} />
+									</Container>
+								</Col>
+							</Row>
+							<Row>
+								<Col>Non Account</Col>
+								<Col>
+									<Container>
+										<Switch title={'Non Account'} defaultChecked onChange={toggleNonAccount} />
+									</Container>
+								</Col>
+							</Row>
+						</Row>
+						<Row>
+							<Col>Start Date:</Col>
+							<Col>
+								<DatePicker
+									onChange={setMinTime}
+									value={minTime}
+									maxDate={maxTime}
+								/>
+							</Col>
+
+						</Row>
+						<Row>
+							<Col>End Date:</Col>
+							<Col>
+								<DatePicker
+									onChange={setMaxTime}
+									value={maxTime}
+									minDate={minTime}
+								/>
+							</Col>
+
+						</Row>
+					</Container>
+				</Col>
+			</Row>
+
 		</div>
 
 	);

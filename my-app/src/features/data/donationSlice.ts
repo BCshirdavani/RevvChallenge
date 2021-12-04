@@ -22,6 +22,7 @@ const initialState: ConationState = {
 		postal_code: "",
 		subscription: false,
 		account_type: "",
+		account_is_user: false,
 		}
 	]
 }
