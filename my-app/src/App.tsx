@@ -19,21 +19,25 @@ function App() {
 
     useEffect(() => {
         setShowSpinner(true);
-        const data = getFakeDonationData();
-        dispatch(setDonationData(data));
-        setDonations(data);
-        setShowSpinner(false);
-        // if(process.env.REACT_APP_DONATIONS_URL) {
-        //     axios.get(process.env.REACT_APP_DONATIONS_URL).then((response) => {
-        //         const cleanData = formatDonationsData(response.data);
-        //         dispatch(setDonationData(cleanData));
-        //         setDonations(cleanData);
-        //         setShowSpinner(false);
-        //     });
-        // } else {
-        //     setShowSpinner(false);
-        //     console.error("missing REACT_APP_DONATIONS_URL environent variable");
-        // }
+        const useFakeData = process.env.REACT_APP_USE_FAKE_DATA;
+        if(useFakeData === 'true'){
+            const data = getFakeDonationData();
+            dispatch(setDonationData(data));
+            setDonations(data);
+            setShowSpinner(false);
+        } else {
+            if(process.env.REACT_APP_DONATIONS_URL) {
+                axios.get(process.env.REACT_APP_DONATIONS_URL).then((response) => {
+                    const cleanData = formatDonationsData(response.data);
+                    dispatch(setDonationData(cleanData));
+                    setDonations(cleanData);
+                    setShowSpinner(false);
+                });
+            } else {
+                setShowSpinner(false);
+                console.error("missing REACT_APP_DONATIONS_URL environent variable");
+            }
+        }
     }, []);
 
     const renderSpinner = () => {
