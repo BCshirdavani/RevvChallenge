@@ -12,29 +12,25 @@ function LeaderBoard() {
 	const prevDonationsRef = useRef<IDonation[]>();
 
 	useEffect(() => {
-		console.log('effect 1');
 		const donationsInStore = donationStoreSate.value;
 		if(donationsInStore != prevDonationsRef.current) {
-			console.log('effect 1: INSIDE IF');
 			setDonations(donationsInStore);
 		}
 		prevDonationsRef.current = donationsInStore;
-	}, [donations]);
+	});
 
 	function renderLeaders() {
-		if (donations.length > 0) {
-			const topN = sortAndFilterTopN(donations, 5);
-			return (
-				<tbody>
-				{topN.map((row, index) =>
-					<tr key={index}>
-						<td>{row[0]}</td>
-						<td>{row[1].toLocaleString('US', { style: 'currency', currency: 'USD' })}</td>
-					</tr>
-				)}
-				</tbody>
-			);
-		}
+		const topN = sortAndFilterTopN(donations, 5);
+		return (
+			<tbody>
+			{topN.map((row, index) =>
+				<tr key={index}>
+					<td>{row[0]}</td>
+					<td>{row[1].toLocaleString('US', { style: 'currency', currency: 'USD' })}</td>
+				</tr>
+			)}
+			</tbody>
+		);
 	}
 
 	function sortAndFilterTopN(donorRecords: IDonation[], n: number): [string, number][]{

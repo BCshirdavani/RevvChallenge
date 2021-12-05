@@ -211,10 +211,8 @@ function DonorChart() {
 							{renderDateFilter('End Date', setMaxTime, maxTime, minTime, false)}
 						</Container>
 					</Container>
-
 				</Col>
 			</Row>
-
 		</Container>
 
 	);
