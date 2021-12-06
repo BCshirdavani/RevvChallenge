@@ -9,7 +9,7 @@ import { useAppDispatch } from "./app/hooks";
 import DonorTable from "./features/donorList/DonorTable";
 import DonorChart from "./features/donorChart/DonorChart";
 import axios from "axios";
-import { Container, Nav, Navbar, Spinner } from "react-bootstrap";
+import { Container, Spinner } from "react-bootstrap";
 import LeaderBoard from "./features/leaderBoard/LeaderBoard";
 
 function App() {

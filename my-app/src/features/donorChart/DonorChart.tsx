@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, Col, Container, Row, ToggleButton } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
 import { formatDataForHourlyChart, getEarliestDate, getLastDate, IChartPoint, IDonation } from "../data/DataHelper";
 import { useSelector } from "react-redux";
 import { store } from "../../app/store";
@@ -27,9 +27,6 @@ function DonorChart() {
 	const [minTime, setMinTime] = useState<Date>(new Date(1984, 1,1,1,1,0,0));
 	const [maxTime, setMaxTime] = useState<Date>(new Date(2024, 1,1,1,1,0,0));
 	const [chartPoints, setChartPoints] = useState<IChartPoint[]>([]);
-	const [shownSubscriberTypes, setshownSubscriberTypes] = useState<boolean[]>([true, false]);
-	const [shownAcctTypes, setshowAncctTypes] = useState<string[]>([AccountTypes.USER, AccountTypes.NON_USER]);
-	const [filteredPoints, setFilteredPoints] = useState<IChartPoint[]>([]);
 	const [showSub, setShowSub] = useState<boolean>(true);
 	const [showNotSub, setShowNotSub] = useState<boolean>(true);
 	const [showAcct, setShowAcct] = useState<boolean>(true);
@@ -39,14 +36,8 @@ function DonorChart() {
 	const prevDonationsRef = useRef<IDonation[]>();
 
 	useEffect(() => {
-		console.log('effect 1');
 		const donationsInStore = donationStoreSate.value;
 		if(donationsInStore != prevDonationsRef.current) {
-			console.log('effect 1: INSIDE IF');
-			console.log('first date:');
-			console.log(getEarliestDate(donationsInStore));
-			console.log('last date:')
-			console.log(getLastDate(donationsInStore));
 			setMinTime(getEarliestDate(donationsInStore));
 			setMaxTime(getLastDate(donationsInStore));
 			setDonations(donationsInStore);
@@ -55,14 +46,12 @@ function DonorChart() {
 	});
 
 	useEffect(() => {
-		console.log('effect 2');
 		if(donations.length > 0){
-			console.log('effect 2: INSIDE IF');
 			const filteredData = applyFilters(donations);
 			const points = formatDataForHourlyChart(filteredData, minTime, maxTime);
 			setChartPoints(points);
 		}
-	}, [minTime, maxTime, donations, shownAcctTypes, shownSubscriberTypes, showNotAcct, showAcct, showNotSub, showSub]);
+	}, [minTime, maxTime, donations, showNotAcct, showAcct, showNotSub, showSub]);
 
 
 	function applyFilters(donationsToFilter: IDonation[]): IDonation[] {
@@ -72,28 +61,26 @@ function DonorChart() {
 		let accountFilter: boolean[] = [];
 		if (showAcct) accountFilter.push(true);
 		if (showNotAcct) accountFilter.push(false);
-		const filteredByDateWindow = donationsToFilter.filter(item => {
+		const filteredData = donationsToFilter.filter(item => {
 			if (item.created_at >= minTime && item.created_at <= maxTime){
 				return true;
 			} else {
 				return false;
 			}
-		});
-		const filteredBySubscriptions = filteredByDateWindow.filter(item => {
+		}).filter(item => {
 			if(subscriptionFilter.includes(item.subscription)){
 				return true;
 			} else {
 				return false;
 			}
-		});
-		const filteredByAcct = filteredBySubscriptions.filter(item => {
+		}).filter(item => {
 			if(accountFilter.includes(item.account_is_user)) {
 				return true;
 			} else {
 				return false;
 			}
 		});
-		return filteredByAcct;
+		return filteredData;
 	}
 
 	function toggleSubscribers(checked: any){

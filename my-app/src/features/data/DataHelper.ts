@@ -1,4 +1,3 @@
-import axios, { AxiosError, AxiosResponse } from "axios";
 import fakeData from "./FakeData.json";
 
 export interface IDonation {
@@ -82,19 +81,7 @@ export 	function formatDataForHourlyChart(rawData: IDonation[], startFilter: Dat
 				// make new entry
 				formattedData.push(newPoint);
 			} else {
-				// update existing entry
-				const nonUser_notSub = (!sortedArr[i].subscription && sortedArr[i].account_type != "user") ? sortedArr[i].amount : 0;
-				const nonUser_sub = (sortedArr[i].subscription && sortedArr[i].account_type != "user") ? sortedArr[i].amount : 0;
-				const user_notSub = (!sortedArr[i].subscription && sortedArr[i].account_type == "user") ? sortedArr[i].amount : 0;
-				const user_sub = (sortedArr[i].subscription && sortedArr[i].account_type == "user") ? sortedArr[i].amount : 0;
-				formattedData[hr] = {
-					...formattedData[hr],
-					nonUser_subscription: formattedData[hr].nonUser_subscription + nonUser_sub,
-					nonUser_notSubscription: formattedData[hr].nonUser_notSubscription + nonUser_notSub,
-					user_subscription: formattedData[hr].user_subscription + user_sub,
-					user_notSubcription: formattedData[hr].user_notSubcription + user_notSub,
-					runningTotal: newPoint.runningTotal,
-				};
+				formattedData[hr] = updateExistingEntry(formattedData, hr, sortedArr, i, newPoint);
 			}
 			i++;
 		} else if (sortedArr[i].created_at >= nextDate && !formattedData[hr]) {
@@ -127,6 +114,22 @@ export function getLastDate(donorRecords: IDonation[]) {
 // used for dev/testing
 export function getFakeDonationData(): IDonation[] {
 	return formatDonationsData(fakeData);
+}
+
+function updateExistingEntry(formattedData: IChartPoint[], hr: number, sortedArr: IDonation[], i: number, newPoint: IChartPoint) {
+	const nonUser_notSub = (!sortedArr[i].subscription && sortedArr[i].account_type != "user") ? sortedArr[i].amount : 0;
+	const nonUser_sub = (sortedArr[i].subscription && sortedArr[i].account_type != "user") ? sortedArr[i].amount : 0;
+	const user_notSub = (!sortedArr[i].subscription && sortedArr[i].account_type == "user") ? sortedArr[i].amount : 0;
+	const user_sub = (sortedArr[i].subscription && sortedArr[i].account_type == "user") ? sortedArr[i].amount : 0;
+	let updatedEntry = {
+		...formattedData[hr],
+		nonUser_subscription: formattedData[hr].nonUser_subscription + nonUser_sub,
+		nonUser_notSubscription: formattedData[hr].nonUser_notSubscription + nonUser_notSub,
+		user_subscription: formattedData[hr].user_subscription + user_sub,
+		user_notSubcription: formattedData[hr].user_notSubcription + user_notSub,
+		runningTotal: newPoint.runningTotal,
+	};
+	return updatedEntry;
 }
 
 // creates chart data point from donation record
