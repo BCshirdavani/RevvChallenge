@@ -12,7 +12,7 @@ import axios from "axios";
 import { Container, Spinner } from "react-bootstrap";
 import LeaderBoard from "./features/leaderBoard/LeaderBoard";
 
-function App() {
+function App(): JSX.Element {
     const [donations, setDonations] = useState<IDonation[]>([]);
     const [showSpinner, setShowSpinner] = useState<boolean>(true);
     const dispatch = useAppDispatch();
@@ -53,7 +53,7 @@ function App() {
     return (
         <div className="App">
             <Container>
-                <h1>Donatoins stuff here...</h1>
+                <h1 className={"MainHeader"}>Donatoins Dashboard</h1>
                 {renderSpinner()}
                 <LeaderBoard/>
                 <DonorChart/>

@@ -6,7 +6,7 @@ import { store } from "../../app/store";
 import './LeaderBoard.css';
 
 
-function LeaderBoard() {
+function LeaderBoard(): JSX.Element {
 	const [donations, setDonations] = useState<IDonation[]>([]);
 	const donationStoreSate = useSelector(state => store.getState().donations);
 	const prevDonationsRef = useRef<IDonation[]>();

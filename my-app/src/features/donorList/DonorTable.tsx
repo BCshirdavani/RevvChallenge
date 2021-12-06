@@ -6,7 +6,7 @@ import { store } from "../../app/store";
 import './DonorTable.css';
 
 
-function DonorTable() {
+function DonorTable(): JSX.Element {
 	const [sortDescending, setSortDescending] = useState<boolean>(true);
 	const [donations, setDonations] = useState<IDonation[]>([]);
 	const donationStoreSate = useSelector(state => store.getState().donations);
@@ -74,7 +74,7 @@ function DonorTable() {
 		<Container className={"DonorTable"}>
 			<h3>List of All Donors</h3>
 			<div>
-				<Button color={"primary"} onClick={() => {toggleSort()}}>Toggle Sort</Button>
+				<Button color={"primary"} onClick={() => {toggleSort()}}>Toggle Sort By Amount</Button>
 			</div>
 			<Table className={"Table"}>
 				<thead>

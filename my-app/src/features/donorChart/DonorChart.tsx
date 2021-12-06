@@ -1,6 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Col, Container, Row } from "react-bootstrap";
-import { formatDataForHourlyChart, getEarliestDate, getLastDate, IChartPoint, IDonation } from "../data/DataHelper";
+import {
+	formatDataForHourlyChart, getBiggestDonation,
+	getEarliestDate,
+	getLastDate, groupDollarsByState,
+	IChartPoint,
+	IDonation,
+	IMapPoint
+} from "../data/DataHelper";
 import { useSelector } from "react-redux";
 import { store } from "../../app/store";
 import {
@@ -16,21 +23,21 @@ import {
 import DatePicker from 'react-date-picker';
 import { Switch } from "antd";
 import './Chart.css';
+import { ComposableMap, Geographies, Geography } from "react-simple-maps";
+import { scaleQuantize } from "d3-scale";
+import geoUrl from "./Map.json";
 
-enum AccountTypes {
-	USER = "user",
-	NON_USER = "non-user",
-}
-
-function DonorChart() {
+function DonorChart(): JSX.Element {
 	const [donations, setDonations] = useState<IDonation[]>([]);
 	const [minTime, setMinTime] = useState<Date>(new Date(1984, 1,1,1,1,0,0));
 	const [maxTime, setMaxTime] = useState<Date>(new Date(2024, 1,1,1,1,0,0));
 	const [chartPoints, setChartPoints] = useState<IChartPoint[]>([]);
+	const [mapPoints, setMapPoints] = useState<IMapPoint[]>([]);
 	const [showSub, setShowSub] = useState<boolean>(true);
 	const [showNotSub, setShowNotSub] = useState<boolean>(true);
 	const [showAcct, setShowAcct] = useState<boolean>(true);
 	const [showNotAcct, setShowNotAcct] = useState<boolean>(true);
+	const [biggestDonation, setBiggestDonation] = useState<number>(100);
 	const donationStoreSate = useSelector(state => store.getState().donations);
 
 	const prevDonationsRef = useRef<IDonation[]>();
@@ -41,6 +48,9 @@ function DonorChart() {
 			setMinTime(getEarliestDate(donationsInStore));
 			setMaxTime(getLastDate(donationsInStore));
 			setDonations(donationsInStore);
+			if(donations.length > 1){
+				setBiggestDonation(getBiggestDonation(donations));
+			}
 		}
 		prevDonationsRef.current = donationsInStore;
 	});
@@ -48,11 +58,31 @@ function DonorChart() {
 	useEffect(() => {
 		if(donations.length > 0){
 			const filteredData = applyFilters(donations);
+			if(filteredData.length > 1){
+				setBiggestDonation(getBiggestDonation(filteredData));
+			}
 			const points = formatDataForHourlyChart(filteredData, minTime, maxTime);
 			setChartPoints(points);
+			setMapPoints(groupDollarsByState(filteredData));
 		}
 	}, [minTime, maxTime, donations, showNotAcct, showAcct, showNotSub, showSub]);
 
+	function colorScale(upperLimit: number, key: number) {
+		let scale = scaleQuantize<string, number>()
+		.domain([1, upperLimit])
+		.range([
+			"#ffedea",
+			"#ffcec5",
+			"#ffad9f",
+			"#ff8a75",
+			"#ff5533",
+			"#e2492d",
+			"#be3d26",
+			"#9a311f",
+			"#782618"
+		]);
+		return scale(key);
+	}
 
 	function applyFilters(donationsToFilter: IDonation[]): IDonation[] {
 		let subscriptionFilter: boolean[] = [];
@@ -181,9 +211,35 @@ function DonorChart() {
 			)
 	}
 
+	const renderMap = () => {
+		const data: IMapPoint[] = mapPoints;
+			return (
+				<Container className={"DollarStateMap"}>
+					<h3>Donations by State</h3>
+					<ComposableMap projection="geoAlbersUsa">
+						<Geographies geography={geoUrl}>
+							{({ geographies }) =>
+								geographies.map(geo => {
+									const cur = data.find(s => s.state === geo.properties.name);
+									return (
+										<Geography
+											key={geo.rsmKey}
+											geography={geo}
+											fill={cur && cur.dollars > 0 ? colorScale(biggestDonation, cur.dollars) as string : "#EEE"}
+										/>
+									);
+								})
+							}
+						</Geographies>
+					</ComposableMap>
+				</Container>
+
+			)
+	}
+
 	return (
 		<Container className={"DonorChart"}>
-			<h3>Chart</h3>
+			<h3>Donations by Hour</h3>
 			<Row>
 				{renderChart()}
 				<Col xs={6} md={4}>
@@ -199,6 +255,9 @@ function DonorChart() {
 						</Container>
 					</Container>
 				</Col>
+			</Row>
+			<Row>
+				{renderMap()}
 			</Row>
 		</Container>
 

@@ -1,4 +1,5 @@
 import fakeData from "./FakeData.json";
+import statesList from "./States.json";
 
 export interface IDonation {
 	id: string,
@@ -26,6 +27,34 @@ export interface IChartPoint {
 	user_notSubcription: number,
 	nonUser_notSubscription: number,
 	runningTotal: number,
+}
+
+export interface IMapPoint {
+	state: string,
+	dollars: number,
+	stateAbreviated: string,
+}
+
+export function groupDollarsByState(donations: IDonation[]): IMapPoint[] {
+	let mapData: Map<string, IMapPoint> = new Map<string, IMapPoint>();
+	const statesListMap: Map<string, string> = new Map(Object.entries(statesList));
+	statesListMap.forEach((value, key) => {
+		const newState: IMapPoint = {
+			dollars: 0, state: value, stateAbreviated: key
+		};
+		mapData.set(key, newState);
+	});
+	donations.forEach(value => {
+		const oldAmount = mapData.get(value.state) != null ? mapData.get(value.state)!.dollars : 0;
+		const updatedMapPoint: IMapPoint = {
+			state: statesListMap.get(value.state)!,
+			dollars: oldAmount + value.amount,
+			stateAbreviated: value.state,
+		};
+			mapData.set(value.state, updatedMapPoint);
+	});
+	const groupedStateDolalrs = Array.from(mapData.values());
+	return groupedStateDolalrs;
 }
 
 // parses json to fit IDonation type
@@ -99,6 +128,11 @@ export 	function formatDataForHourlyChart(rawData: IDonation[], startFilter: Dat
 		}
 	}
 	return formattedData;
+}
+
+export function getBiggestDonation(donorRecords: IDonation[]) {
+	let arrToSort = [...donorRecords];
+	return arrToSort.sort((a, b) => b.amount - a.amount)[0].amount;
 }
 
 export function getEarliestDate(donorRecords: IDonation[]) {
