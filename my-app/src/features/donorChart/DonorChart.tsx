@@ -155,7 +155,7 @@ function DonorChart(): JSX.Element {
 				<Row>
 					<Col className={'FilterItem'}>{description}</Col>
 					<Col className={'FilterItem'}>
-						<DatePicker
+						<DatePicker className={"DatePicker"}
 							onChange={onChange}
 							value={val}
 							maxDate={dateCutoff}
@@ -169,7 +169,7 @@ function DonorChart(): JSX.Element {
 				<Row>
 					<Col className={'FilterItem'}>{description}</Col>
 					<Col className={'FilterItem'}>
-						<DatePicker
+						<DatePicker className={"DatePicker"}
 							onChange={onChange}
 							value={val}
 							minDate={dateCutoff}
@@ -182,7 +182,7 @@ function DonorChart(): JSX.Element {
 
 	const renderChart = () => {
 		return (
-				<Col xs={12} md={8}>
+				<Container>
 					<ResponsiveContainer height={600} width={"100%"}>
 						<ComposedChart
 							width={800}
@@ -199,15 +199,15 @@ function DonorChart(): JSX.Element {
 							<XAxis dataKey="hour" />
 							<YAxis tickFormatter={(value: number) => new Intl.NumberFormat('en', {style: 'currency', currency: 'USD', maximumFractionDigits: 0}).format(value)}/>
 							<Tooltip formatter={(value: number) => new Intl.NumberFormat('en', {style: 'currency', currency: 'USD'}).format(value)} />
-							<Legend layout="vertical" verticalAlign="top" align="center" />
+							<Legend verticalAlign="top" align="center" />
 							<Bar dataKey="user_subscription" barSize={30} stackId={"a"} fill="#30cb00" />
 							<Bar dataKey="nonUser_subscription" barSize={30} stackId={"a"} fill="#4ae54a" />
-							<Bar dataKey="user_notSubcription" barSize={30} stackId={"a"} fill="#ffcc9d" />
+							<Bar dataKey="user_notSubcription" barSize={30} stackId={"a"} fill="#ff4f00" />
 							<Bar dataKey="nonUser_notSubscription" barSize={30} stackId={"a"} fill="#ffa29d" />
 							<Line type="monotone" dataKey="runningTotal" stroke="gray" />
 						</ComposedChart>
 					</ResponsiveContainer>
-				</Col>
+				</Container>
 			)
 	}
 
@@ -242,19 +242,27 @@ function DonorChart(): JSX.Element {
 			<h3>Donations by Hour</h3>
 			<Row>
 				{renderChart()}
-				<Col xs={6} md={4}>
-					<Container className={'FilterArea'}>
-						<h5>Chart Filters</h5>
-						<Container>
-							{renderCategoryFilter('Subscribers', toggleSubscribers)}
-							{renderCategoryFilter('Non Subscribers', toggleNonSubscribers)}
-							{renderCategoryFilter('Account', toggleAccount)}
-							{renderCategoryFilter('Non Account', toggleNonAccount)}
-							{renderDateFilter('Start Date', setMinTime, minTime, maxTime, true)}
-							{renderDateFilter('End Date', setMaxTime, maxTime, minTime, false)}
-						</Container>
+			</Row>
+			<Row>
+				<Container className={'FilterArea'}>
+					<h5>Chart Filters</h5>
+					<Container>
+						<Row>
+							<Col>
+								{renderCategoryFilter('Subscribers', toggleSubscribers)}
+								{renderCategoryFilter('Non Subscribers', toggleNonSubscribers)}
+							</Col>
+							<Col>
+								{renderCategoryFilter('Account', toggleAccount)}
+								{renderCategoryFilter('Non Account', toggleNonAccount)}
+							</Col>
+							<Col>
+								{renderDateFilter('Start Date', setMinTime, minTime, maxTime, true)}
+								{renderDateFilter('End Date', setMaxTime, maxTime, minTime, false)}
+							</Col>
+						</Row>
 					</Container>
-				</Col>
+				</Container>
 			</Row>
 			<Row>
 				{renderMap()}
