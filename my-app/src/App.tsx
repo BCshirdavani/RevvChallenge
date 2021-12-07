@@ -4,34 +4,36 @@ import {
     formatDonationsData, getFakeDonationData,
     IDonation,
 } from "./features/data/DataHelper";
-import { setDonationData } from '../src/features/data/donationSlice';
+import { setDonationData } from './features/data/donationSlice';
 import { useAppDispatch } from "./app/hooks";
 import DonorTable from "./features/donorList/DonorTable";
 import DonorChart from "./features/donorChart/DonorChart";
 import axios from "axios";
-import { Container, Spinner } from "react-bootstrap";
+import { Alert, Container, Spinner } from "react-bootstrap";
 import LeaderBoard from "./features/leaderBoard/LeaderBoard";
 
 function App(): JSX.Element {
-    const [donations, setDonations] = useState<IDonation[]>([]);
     const [showSpinner, setShowSpinner] = useState<boolean>(true);
+    const [showError, setShowError] = useState<boolean>(false);
     const dispatch = useAppDispatch();
 
     useEffect(() => {
         setShowSpinner(true);
         const useFakeData = process.env.REACT_APP_USE_FAKE_DATA;
         if(useFakeData === 'true'){
-            const data = getFakeDonationData();
+            const data: IDonation[] = getFakeDonationData();
             dispatch(setDonationData(data));
-            setDonations(data);
             setShowSpinner(false);
         } else {
             if(process.env.REACT_APP_DONATIONS_URL) {
                 axios.get(process.env.REACT_APP_DONATIONS_URL).then((response) => {
-                    const cleanData = formatDonationsData(response.data);
+                    const cleanData: IDonation[] = formatDonationsData(response.data);
                     dispatch(setDonationData(cleanData));
-                    setDonations(cleanData);
                     setShowSpinner(false);
+                }).catch((error) => {
+                    setShowError(true);
+                    console.error(error);
+                    alert("please disable ad blockers so this site can request external data");
                 });
             } else {
                 setShowSpinner(false);
@@ -50,11 +52,25 @@ function App(): JSX.Element {
         }
     }
 
+    const renderAlert = () => {
+        if(showError){
+            return (
+                <Alert variant="danger" onClose={() => setShowError(false)} dismissible>
+                    <Alert.Heading>Error!</Alert.Heading>
+                    <p>
+                        Please disable any ad blockers, and refresh the page.
+                    </p>
+                </Alert>
+            );
+        }
+    }
+
     return (
         <div className="App">
             <Container>
                 <h1 className={"MainHeader"}>Donatoins Dashboard</h1>
                 {renderSpinner()}
+                {renderAlert()}
                 <LeaderBoard/>
                 <DonorChart/>
                 <DonorTable/>

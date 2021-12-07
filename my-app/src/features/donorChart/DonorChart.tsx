@@ -44,7 +44,7 @@ function DonorChart(): JSX.Element {
 
 	useEffect(() => {
 		const donationsInStore = donationStoreSate.value;
-		if(donationsInStore != prevDonationsRef.current) {
+		if(donationsInStore !== prevDonationsRef.current) {
 			setMinTime(getEarliestDate(donationsInStore));
 			setMaxTime(getLastDate(donationsInStore));
 			setDonations(donationsInStore);
@@ -53,7 +53,7 @@ function DonorChart(): JSX.Element {
 			}
 		}
 		prevDonationsRef.current = donationsInStore;
-	});
+	}, [donationStoreSate.value, donations]);
 
 	useEffect(() => {
 		if(donations.length > 0){
@@ -92,23 +92,11 @@ function DonorChart(): JSX.Element {
 		if (showAcct) accountFilter.push(true);
 		if (showNotAcct) accountFilter.push(false);
 		const filteredData = donationsToFilter.filter(item => {
-			if (item.created_at >= minTime && item.created_at <= maxTime){
-				return true;
-			} else {
-				return false;
-			}
+			return item.created_at >= minTime && item.created_at <= maxTime;
 		}).filter(item => {
-			if(subscriptionFilter.includes(item.subscription)){
-				return true;
-			} else {
-				return false;
-			}
+			return subscriptionFilter.includes(item.subscription);
 		}).filter(item => {
-			if(accountFilter.includes(item.account_is_user)) {
-				return true;
-			} else {
-				return false;
-			}
+			return accountFilter.includes(item.account_is_user);
 		});
 		return filteredData;
 	}

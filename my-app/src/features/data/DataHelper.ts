@@ -75,7 +75,7 @@ export function formatDonationsData(donations: any[]): IDonation[] {
 			postal_code: row.postal_code,
 			state: row.state,
 			subscription: row.subscription === "true",
-			account_is_user: row.account_type == "user",
+			account_is_user: row.account_type === "user",
 		};
 		formattedDonations.push(newRow);
 	});
@@ -151,10 +151,10 @@ export function getFakeDonationData(): IDonation[] {
 }
 
 function updateExistingEntry(formattedData: IChartPoint[], hr: number, sortedArr: IDonation[], i: number, newPoint: IChartPoint) {
-	const nonUser_notSub = (!sortedArr[i].subscription && sortedArr[i].account_type != "user") ? sortedArr[i].amount : 0;
-	const nonUser_sub = (sortedArr[i].subscription && sortedArr[i].account_type != "user") ? sortedArr[i].amount : 0;
-	const user_notSub = (!sortedArr[i].subscription && sortedArr[i].account_type == "user") ? sortedArr[i].amount : 0;
-	const user_sub = (sortedArr[i].subscription && sortedArr[i].account_type == "user") ? sortedArr[i].amount : 0;
+	const nonUser_notSub = (!sortedArr[i].subscription && sortedArr[i].account_type !== "user") ? sortedArr[i].amount : 0;
+	const nonUser_sub = (sortedArr[i].subscription && sortedArr[i].account_type !== "user") ? sortedArr[i].amount : 0;
+	const user_notSub = (!sortedArr[i].subscription && sortedArr[i].account_type === "user") ? sortedArr[i].amount : 0;
+	const user_sub = (sortedArr[i].subscription && sortedArr[i].account_type === "user") ? sortedArr[i].amount : 0;
 	let updatedEntry = {
 		...formattedData[hr],
 		nonUser_subscription: formattedData[hr].nonUser_subscription + nonUser_sub,
@@ -168,10 +168,10 @@ function updateExistingEntry(formattedData: IChartPoint[], hr: number, sortedArr
 
 // creates chart data point from donation record
 function newChartPointFromRow(row: IDonation, i: number, oldTotal: number, dateBucket: Date): IChartPoint {
-	const nonUser_notSub = (!row.subscription && row.account_type != "user") ? row.amount : 0;
-	const nonUser_sub = (row.subscription && row.account_type != "user") ? row.amount : 0;
-	const user_notSub = (!row.subscription && row.account_type == "user") ? row.amount : 0;
-	const user_sub = (row.subscription && row.account_type == "user") ? row.amount : 0;
+	const nonUser_notSub = (!row.subscription && row.account_type !== "user") ? row.amount : 0;
+	const nonUser_sub = (row.subscription && row.account_type !== "user") ? row.amount : 0;
+	const user_notSub = (!row.subscription && row.account_type === "user") ? row.amount : 0;
+	const user_sub = (row.subscription && row.account_type === "user") ? row.amount : 0;
 	const newPoint: IChartPoint = {
 		date: new Date(dateBucket),
 		hour: dateBucket.toLocaleDateString() + " " + dateBucket.toLocaleTimeString(),

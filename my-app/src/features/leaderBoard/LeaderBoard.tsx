@@ -13,11 +13,11 @@ function LeaderBoard(): JSX.Element {
 
 	useEffect(() => {
 		const donationsInStore = donationStoreSate.value;
-		if(donationsInStore != prevDonationsRef.current) {
+		if(donationsInStore !== prevDonationsRef.current) {
 			setDonations(donationsInStore);
 		}
 		prevDonationsRef.current = donationsInStore;
-	});
+	}, [donationStoreSate.value]);
 
 	function renderLeaders() {
 		const topN = sortAndFilterTopN(donations, 5);
