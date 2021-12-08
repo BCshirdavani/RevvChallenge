@@ -10,9 +10,10 @@ The goal is outlined here: https://gist.github.com/kschutt/4f4a79365429bee99db69
    1. `REACT_APP_DONATIONS_URL=https://jyy74t2sj0.execute-api.us-east-1.amazonaws.com/v1/donations`
    2. `REACT_APP_USE_FAKE_DATA=false`
 4. run `npm install` to install the dependencies
-5. for testing, run `npm start` and visit the site at http://localhost:3000
-6. to deploy, run `npm run build`
-7. then run `npx serve build`, and visit the site at http://localhost:3000
+5. to run the unit tests, use ` npm test a` command
+6. for testing, run `npm start` and visit the site at http://localhost:3000
+7. to deploy, run `npm run build`
+8. then run `npx serve build`, and visit the site at http://localhost:3000
 
 ## Tools Used
  - The starting foundation was built from a React.js template with TypeScript and Redux 

@@ -68,7 +68,7 @@ function App(): JSX.Element {
     return (
         <div className="App">
             <Container>
-                <h1 className={"MainHeader"}>Donatoins Dashboard</h1>
+                <h1 className={"MainHeader"}>Donations Dashboard</h1>
                 {renderSpinner()}
                 {renderAlert()}
                 <LeaderBoard/>

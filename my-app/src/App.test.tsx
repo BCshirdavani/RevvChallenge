@@ -3,13 +3,15 @@ import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { store } from './app/store';
 import App from './App';
+import TestRenderer from 'react-test-renderer';
 
-test('renders learn react link', () => {
-  const { getByText } = render(
-    <Provider store={store}>
-      <App />
-    </Provider>
-  );
+test('App component renders, Donations Dashboard heading is present', () => {
+    const testRenderer = TestRenderer.create(
+        <Provider store={store}>
+            <App />
+        </Provider>
+    );
 
-  expect(getByText(/learn/i)).toBeInTheDocument();
+    // @ts-ignore
+    expect(testRenderer.toJSON().children[0].children[0].children[0]).toEqual("Donations Dashboard");
 });
