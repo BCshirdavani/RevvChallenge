@@ -45,6 +45,17 @@ The goal is outlined here: https://gist.github.com/kschutt/4f4a79365429bee99db69
    - tmux to keep the terminal shell alive while serving the app in background
      - source: https://github.com/tmux/tmux/wiki
 
+## New features to potentially add in the future:
+ - Some more bar charts could be nice, to segment the audience into different categories, and compare the respective donation dollars of each category:
+   - Account vs Non Account donations
+   - Subscriber vs Non Subscriber donations
+ - Making the bar chart dynamically **adapt bucket sizes** based on time filter span could be useful. If it is intended to be showing data for a long span of time, ranging in the months, bars per day would be more visible than bars per hour
+ - The list of all donors table at the bottom could be modified to **sort or filter on all columns**, not just the amount column
+ - This list could be updated with **pagination**, or a recycler view that **won't render all the data at once**. For this amount of fake data, displaying all records is no problem, but this might create a super tall webpage if the number of records increases too much
+ - A bar chart that visualizes donation dollars by hour of day could be nice to see if there's a peak time of day when donations most likely occur (after work hours?)
+ - Bar chart for donations by day (S,M,T,W,Th,F,S) could show trends if maybe donations peak on weekends
+ - Connecting external data with this donation data could be insightful. I imagine that many donations are directly correlated to some ad campaigns that have location, time, and cost data. This data could be used to evaluate the performance of those campaigns
+
 ## Notes
 - ad blockers may cause a network error, and the GET request will be unable to get the data from the API. Please disable ad blockers, otherwise an alert will pop up, rather than charts rendering.
 - This app does not clean / validate data being returned from the fake data API. It assumes they are all valid entries.
